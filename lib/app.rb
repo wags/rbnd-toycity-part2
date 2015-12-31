@@ -1,26 +1,121 @@
 require 'json'
-path = File.join(File.dirname(__FILE__), '../data/products.json')
-file = File.read(path)
-products_hash = JSON.parse(file)
 
-# Print "Sales Report" in ascii art
+# Get path to products.json, read the file into a string,
+# and transform the string into a usable hash
+def setup_files
+  path = File.join(File.dirname(__FILE__), '../data/products.json')
+  file = File.read(path)
+  $products_hash = JSON.parse(file)
+end
 
-# Print today's date
+def print_heading
+  # Print "Sales Report" in ascii art
 
-# Print "Products" in ascii art
+  # Print today's date
+  puts Time.now.strftime("%m/%d/%Y")
+end
 
-# For each product in the data set:
-	# Print the name of the toy
-	# Print the retail price of the toy
-	# Calculate and print the total number of purchases
-  # Calcalate and print the total amount of sales
-  # Calculate and print the average price the toy sold for
-  # Calculate and print the average discount based off the average sales price
+def make_products_section
+  # Print "Products" in ascii art
+  puts "                     _            _       "
+  puts "                    | |          | |      "
+  puts " _ __  _ __ ___   __| |_   _  ___| |_ ___ "
+  puts "| '_ \\| '__/ _ \\ / _` | | | |/ __| __/ __|"
+  puts "| |_) | | | (_) | (_| | |_| | (__| |_\\__ \\"
+  puts "| .__/|_|  \\___/ \\__,_|\\__,_|\\___|\\__|___/"
+  puts "| |                                       "
+  puts "|_|                                       "
+  puts
+  # For each product in the data set:
+    # Print the name of the toy
+    # Print the retail price of the toy
+    # Calculate and print the total number of purchases
+    # Calculate and print the total amount of sales
+    # Calculate and print the average price the toy sold for
+    # Calculate and print the average discount based off the average sales price
+  $unique_brands = []
 
-# Print "Brands" in ascii art
+  $products_hash["items"].each do |item|
+    # Gather / calculate the required product data
+    retail_price = item["full-price"].to_f
+    total_purchases = item["purchases"].length
+    total_sales = item["purchases"].map { |purchase| purchase["price"] }.reduce(:+)
+    avg_price = (total_sales / total_purchases).round(2)
+    avg_discount = ((1 - (avg_price / retail_price)) * 100).round(1)
 
-# For each brand in the data set:
-	# Print the name of the brand
-	# Count and print the number of the brand's toys we stock
-	# Calculate and print the average price of the brand's toys
-	# Calculate and print the total sales volume of all the brand's toys combined
+    # Print the product report
+    puts item["title"]
+    puts "-" * 20
+    puts "Retail Price: $#{retail_price}"
+    puts "Total Purchases: #{total_purchases}"
+    puts "Total Sales: $#{total_sales}"
+    puts "Average Price: $#{avg_price}"
+    puts "Average Discount: #{avg_discount}%"
+    puts "-" * 20
+    puts
+
+    # Save unique brands for later processing
+    $unique_brands.push(item["brand"]) unless $unique_brands.include?(item["brand"])
+  end
+end
+
+def make_brands_section
+  # Print "Brands" in ascii art
+  puts " _                         _     "
+  puts "| |                       | |    "
+  puts "| |__  _ __ __ _ _ __   __| |___ "
+  puts "| '_ \\| '__/ _` | '_ \\ / _` / __|"
+  puts "| |_) | | | (_| | | | | (_| \\__ \\"
+  puts "|_.__/|_|  \\__,_|_| |_|\\__,_|___/"
+  puts
+  # For each brand in the data set:
+    # Print the name of the brand
+    # Count and print the number of the brand's toys we stock
+    # Calculate and print the average price of the brand's toys
+    # Calculate and print the total sales volume of all the brand's toys combined
+  $unique_brands.each do |brand|
+    brand_items = $products_hash["items"].select { |item| item["brand"] == brand }
+
+    # For each item matching the current brand, calculate the data for the report
+    total_inventory = 0
+    total_revenue = 0
+    total_retail = 0
+    item_count = brand_items.length
+
+    # Get total numbers for all the items in this brand
+    brand_items.each do |item|
+      total_inventory += item["stock"]
+      total_revenue += item["purchases"].map { |purchase| purchase["price"] }.reduce(:+)
+      total_retail += item["full-price"].to_f
+    end
+
+    # Calculate the average product price for the brand
+    avg_price = (total_retail / item_count).round(2)
+
+    # Print the summary report for the brand
+    puts brand
+    puts "-" * 20
+    puts "Number of Products: #{total_inventory}"
+    puts "Average Product Price: $#{avg_price}"
+    puts "Total Sales: $#{total_revenue.round(2)}"
+    puts "-" * 20
+    puts
+  end
+end
+
+def print_data
+  make_products_section
+  make_brands_section
+end
+
+def create_report
+  print_heading
+  print_data
+end
+
+def start
+  setup_files # load, read, parse, and create the files
+  create_report # create the report!
+end
+
+start # call start method to trigger report generation
