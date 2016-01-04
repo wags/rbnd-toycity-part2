@@ -82,61 +82,58 @@ def print_brand_summary(brand)
   puts
 end
 
-def get_total_purchases(item)
-  item["purchases"].map { |purchase| purchase["price"] }.reduce(:+)
-end
-
 def average(total_amount, quantity)
   (total_amount / quantity).round(2)
 end
 
+def discount(discounted_price, full_price)
+  ((1 - (discounted_price / full_price)) * 100).round(1)
+end
+
+def sales_volume_of_item(item)
+  item["purchases"].map { |purchase| purchase["price"] }.reduce(:+)
+end
+
+def average_price_of_item(item)
+  average(sales_volume_of_item(item), item["purchases"].length)
+end
+
 def generate_product_summary(item)
   # Gather / calculate the required product data
-  product = {title: "", price: 0, total_purchases: 0, total_sales: 0, avg_price: 0, avg_discount: 0}
-  product[:title] = item["title"]
-  product[:price] = item["full-price"].to_f
-  product[:total_purchases] = item["purchases"].length
-  product[:total_sales] = get_total_purchases(item)
-  product[:avg_price] = average(product[:total_sales], product[:total_purchases])
-  product[:avg_discount] = ((1 - (product[:avg_price] / product[:price])) * 100).round(1)
-  # In this method, an explicit return statement is required
-  return product
+  retail_price = item["full-price"].to_f
+  avg_price = average_price_of_item item
+  avg_discount = discount avg_price, retail_price
+
+  product = {
+    :title => item["title"],
+    :price => retail_price,
+    :total_purchases => item["purchases"].length,
+    :total_sales => sales_volume_of_item(item),
+    :avg_price => avg_price,
+    :avg_discount => avg_discount
+  }
 end
 
 def generate_brand_summary(item, brand_data_hash)
-  item_data = {count: 1, inventory: item["stock"], price_sum: item["full-price"].to_f, sales_sum: get_total_purchases(item)}
+  item_data = {
+    :count => 1,
+    :inventory => item["stock"],
+    :price_sum => item["full-price"].to_f,
+    :sales_sum => sales_volume_of_item(item)
+  }
 
   brand_name = item["brand"]
   # Check if the brands hash has this brand in it yet
   if brand_data_hash.has_key?(brand_name)
-    # add the new data to the existing values
+    # Add the new data to the existing values
     brand_data_hash[brand_name][:count] += 1
     brand_data_hash[brand_name][:inventory] += item_data[:inventory]
     brand_data_hash[brand_name][:price_sum] += item_data[:price_sum]
     brand_data_hash[brand_name][:sales_sum] += item_data[:sales_sum]
   else
-    # insert the data as a new brand
+    # Insert the data as a new brand
     brand_data_hash[item["brand"]] = item_data
   end
-end
-
-def process_report_data
-  # Loop through the main product data hash once and update product and brand
-  # data arrays for separate processing.
-  product_data_array = []
-  brand_data_hash = {}
-
-  $products_hash["items"].each do |item|
-    # generate product data for the item
-    product_data_array.push(generate_product_summary(item))
-
-    # generate the brand data, grouped by unique brands
-    generate_brand_summary(item, brand_data_hash)
-  end
-
-  # call the methods to print the sections, passing in the appropriate arrays
-  make_products_section(product_data_array)
-  make_brands_section(brand_data_hash)
 end
 
 def make_products_section(product_data)
@@ -163,10 +160,26 @@ def make_brands_section(brand_data)
   brand_data.each { |item| print_brand_summary(item) }
 end
 
+def process_report_data
+  # Loop through the main product data hash once and update product and brand
+  # data arrays for separate processing.
+  product_data_array = []
+  brand_data_hash = {}
+
+  $products_hash["items"].each do |item|
+    # Gather product data for the item
+    product_data_array.push(generate_product_summary(item))
+    # Gather the brand data, grouped by unique brands
+    generate_brand_summary(item, brand_data_hash)
+  end
+
+  # Call the methods to print the sections, passing the appropriate data to each
+  make_products_section(product_data_array)
+  make_brands_section(brand_data_hash)
+end
+
 def print_data
   process_report_data
-  #make_products_section
-  #make_brands_section
 end
 
 def create_report
