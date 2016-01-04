@@ -9,36 +9,39 @@ def setup_files
 end
 
 def make_headings
-  $heading_report = []
-  $heading_report.push("  #####                                 ######                                   ")
-  $heading_report.push(" #     #   ##   #      ######  ####     #     # ###### #####   ####  #####  #####")
-  $heading_report.push(" #        #  #  #      #      #         #     # #      #    # #    # #    #   #  ")
-  $heading_report.push("  #####  #    # #      #####   ####     ######  #####  #    # #    # #    #   #  ")
-  $heading_report.push("       # ###### #      #           #    #   #   #      #####  #    # #####    #  ")
-  $heading_report.push(" #     # #    # #      #      #    #    #    #  #      #      #    # #   #    #  ")
-  $heading_report.push("  #####  #    # ###### ######  ####     #     # ###### #       ####  #    #   #  ")
-  $heading_report.push("********************************************************************************")
-  $heading_report.push("")
+  $heading_title = [
+    "  #####                                 ######                                   ",
+    " #     #   ##   #      ######  ####     #     # ###### #####   ####  #####  #####",
+    " #        #  #  #      #      #         #     # #      #    # #    # #    #   #  ",
+    "  #####  #    # #      #####   ####     ######  #####  #    # #    # #    #   #  ",
+    "       # ###### #      #           #    #   #   #      #####  #    # #####    #  ",
+    " #     # #    # #      #      #    #    #    #  #      #      #    # #   #    #  ",
+    "  #####  #    # ###### ######  ####     #     # ###### #       ####  #    #   #  ",
+    "********************************************************************************",
+    ""
+  ]
 
-  $heading_products = []
-  $heading_products.push("                     _            _       ")
-  $heading_products.push("                    | |          | |      ")
-  $heading_products.push(" _ __  _ __ ___   __| |_   _  ___| |_ ___ ")
-  $heading_products.push("| '_ \\| '__/ _ \\ / _` | | | |/ __| __/ __|")
-  $heading_products.push("| |_) | | | (_) | (_| | |_| | (__| |_\\__ \\")
-  $heading_products.push("| .__/|_|  \\___/ \\__,_|\\__,_|\\___|\\__|___/")
-  $heading_products.push("| |                                       ")
-  $heading_products.push("|_|                                       ")
-  $heading_products.push("")
+  $heading_products = [
+    "                     _            _       ",
+    "                    | |          | |      ",
+    " _ __  _ __ ___   __| |_   _  ___| |_ ___ ",
+    "| '_ \\| '__/ _ \\ / _` | | | |/ __| __/ __|",
+    "| |_) | | | (_) | (_| | |_| | (__| |_\\__ \\",
+    "| .__/|_|  \\___/ \\__,_|\\__,_|\\___|\\__|___/",
+    "| |                                       ",
+    "|_|                                       ",
+    ""
+  ]
 
-  $heading_brands = []
-  $heading_brands.push(" _                         _     ")
-  $heading_brands.push("| |                       | |    ")
-  $heading_brands.push("| |__  _ __ __ _ _ __   __| |___ ")
-  $heading_brands.push("| '_ \\| '__/ _` | '_ \\ / _` / __|")
-  $heading_brands.push("| |_) | | | (_| | | | | (_| \\__ \\")
-  $heading_brands.push("|_.__/|_|  \\__,_|_| |_|\\__,_|___/")
-  $heading_brands.push("")
+  $heading_brands = [
+    " _                         _     ",
+    "| |                       | |    ",
+    "| |__  _ __ __ _ _ __   __| |___ ",
+    "| '_ \\| '__/ _` | '_ \\ / _` / __|",
+    "| |_) | | | (_| | | | | (_| \\__ \\",
+    "|_.__/|_|  \\__,_|_| |_|\\__,_|___/",
+    ""
+  ]
 end
 
 def print_divider
@@ -51,7 +54,7 @@ end
 
 def print_heading
   # Print "Sales Report" in ascii art
-  print_ascii_art($heading_report)
+  print_ascii_art($heading_title)
   # Print today's date
   puts "Report Date: #{Time.now.strftime('%m/%d/%Y')}"
 end
