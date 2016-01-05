@@ -6,6 +6,7 @@ def setup_files
   path = File.join(File.dirname(__FILE__), '../data/products.json')
   file = File.read(path)
   $products_hash = JSON.parse(file)
+  $report_file = File.new("report.txt", "w+")
 end
 
 def make_headings
@@ -45,41 +46,41 @@ def make_headings
 end
 
 def print_divider
-  print "-" * 20
+  "-" * 20
 end
 
 def print_ascii_art(*lines)
-  lines.each {|line| puts line}
+  lines.each {|line| $report_file.puts(line)}
 end
 
 def print_heading
   # Print "Sales Report" in ascii art
   print_ascii_art($heading_title)
   # Print today's date
-  puts "Report Date: #{Time.now.strftime('%m/%d/%Y')}"
+  $report_file.puts "Report Date: #{Time.now.strftime('%m/%d/%Y')}"
 end
 
 def print_product_summary(product)
   # Print the product report
-  puts product[:title]
-  puts print_divider
-  puts "Retail Price: $#{product[:price]}"
-  puts "Total Purchases: #{product[:total_purchases]}"
-  puts "Total Sales: $#{product[:total_sales]}"
-  puts "Average Price: $#{product[:avg_price]}"
-  puts "Average Discount: #{product[:avg_discount]}%"
-  puts print_divider
-  puts
+  $report_file.puts product[:title]
+  $report_file.puts print_divider
+  $report_file.puts "Retail Price: $#{product[:price]}"
+  $report_file.puts "Total Purchases: #{product[:total_purchases]}"
+  $report_file.puts "Total Sales: $#{product[:total_sales]}"
+  $report_file.puts "Average Price: $#{product[:avg_price]}"
+  $report_file.puts "Average Discount: #{product[:avg_discount]}%"
+  $report_file.puts print_divider
+  $report_file.puts
 end
 
 def print_brand_summary(brand)
-  puts brand[0]
-  puts print_divider
-  puts "Number of Products: #{brand[1][:inventory]}"
-  puts "Average Product Price: $#{average(brand[1][:price_sum], brand[1][:count])}"
-  puts "Total Sales: $#{brand[1][:sales_sum].round(2)}"
-  puts print_divider
-  puts
+  $report_file.puts brand[0]
+  $report_file.puts print_divider
+  $report_file.puts "Number of Products: #{brand[1][:inventory]}"
+  $report_file.puts "Average Product Price: $#{average(brand[1][:price_sum], brand[1][:count])}"
+  $report_file.puts "Total Sales: $#{brand[1][:sales_sum].round(2)}"
+  $report_file.puts print_divider
+  $report_file.puts
 end
 
 def average(total_amount, quantity)
@@ -191,6 +192,7 @@ def start
   setup_files # load, read, parse, and create the files
   make_headings
   create_report # create the report!
+  $report_file.close # Close the report file
 end
 
 start # call start method to trigger report generation
