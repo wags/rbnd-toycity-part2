@@ -45,8 +45,8 @@ def make_headings
   ]
 end
 
-def print_divider
-  "-" * 20
+def divider(length=20, symbol="*")
+  symbol * length
 end
 
 def print_ascii_art(*lines)
@@ -62,24 +62,24 @@ end
 
 def print_product_summary(product)
   # Print the product report
-  $report_file.puts product[:title]
-  $report_file.puts print_divider
+  $report_file.puts divider(product[:title].length)
+  $report_file.puts "--#{product[:title]}--"
   $report_file.puts "Retail Price: $#{product[:price]}"
   $report_file.puts "Total Purchases: #{product[:total_purchases]}"
-  $report_file.puts "Total Sales: $#{product[:total_sales]}"
+  $report_file.puts "Total Sales Volume: $#{product[:total_sales]}"
   $report_file.puts "Average Price: $#{product[:avg_price]}"
   $report_file.puts "Average Discount: #{product[:avg_discount]}%"
-  $report_file.puts print_divider
+  $report_file.puts divider(product[:title].length)
   $report_file.puts
 end
 
 def print_brand_summary(brand)
   $report_file.puts brand[0]
-  $report_file.puts print_divider
+  $report_file.puts divider
   $report_file.puts "Number of Products: #{brand[1][:inventory]}"
   $report_file.puts "Average Product Price: $#{average(brand[1][:price_sum], brand[1][:count])}"
   $report_file.puts "Total Sales: $#{brand[1][:sales_sum].round(2)}"
-  $report_file.puts print_divider
+  $report_file.puts divider
   $report_file.puts
 end
 
@@ -176,6 +176,7 @@ def process_report_data
 
   # Call the methods to print the sections, passing the appropriate data to each
   make_products_section(product_data_array)
+  $report_file.puts divider(40)
   make_brands_section(brand_data_hash)
 end
 
@@ -189,10 +190,10 @@ def create_report
 end
 
 def start
-  setup_files # load, read, parse, and create the files
+  setup_files # Load, read, parse, and create the files
   make_headings
-  create_report # create the report!
+  create_report # Create the report!
   $report_file.close # Close the report file
 end
 
-start # call start method to trigger report generation
+start # Call start method to trigger report generation
